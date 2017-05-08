@@ -1,8 +1,10 @@
+// plusとsubではエラーがたくさん
 function v(n) {
   var x=0;
   var y=0;
   var ret = {};
   if(n!==~~n) {
+    console.error('invalid value:', 'v', n);
     ret.x = NaN;
     ret.y = NaN;
     return ret;
@@ -52,13 +54,37 @@ function plus(n1, n2) {
 
   if(v1.y===v2.y) {
     var vTmp = v(v1.x+v2.x+1);
-    return n(vTmp.x, vTmp.y+ v1.y+1);
+    return n(vTmp.x, incr(plus(vTmp.y, v1.y)));
   } else if(v1.y>v2.y) {
-    return n( n(v1.x, v1.y-v2.y-1)+v2.x, v2.y )
+    return n( plus( n(v1.x, decr(plus(v1.y, -v2.y))), v2.x ), v2.y );
   } else if(v2.y>v1.y) {
-    return n( n(v2.x, v2.y-v1.y-1)+v1.x, v1.y )
+    return n( plus( n(v2.x, decr(plus(v2.y, -v1.y))), v1.x ), v1.y );
   } else {
-    console.error("invalid value.");
+    console.error('invalid value:'+'plus', n1, n2);
+  }
+}
+
+function sub(n1, n2) {
+  var traceTxt = '';
+  var v1 = v(n1);
+  var v2 = v(n2);
+  
+  if(n2===0) {
+    return n1;
+  }
+  if(n1===0) {
+    return -n2;
+  }
+
+  if(v1.y===v2.y) {
+    var vTmp = v(v1.x-v2.x);
+    return n(vTmp.x, 1+(vTmp.y+ v1.y));
+  } else if(v1.y>v2.y) {
+    return n( ( n(v1.x+ -1+((v1.y- v2.y))), v2.x ), v2.y );
+  } else if(v2.y>v1.y) {
+    return n( ( n(v2.x+ -1+((v2.y- v1.y))), v1.x ), v1.y );
+  } else {
+    console.error('invalid value:'+'sub', n1, n2);
   }
 }
 
@@ -73,7 +99,7 @@ function incr(n1) {
   } else if(v1.y>0) {
     return n( n(v1.x, v1.y-1), 0 );
   } else {
-    console.error('invalid value.');
+    console.error('invalid value:', 'incr', n1);
   }
   var vTmp = v();
 }
@@ -89,11 +115,16 @@ function decr(n1) {
   } else if(v1.y>0) {
     return n( n(v1.x, v1.y-1)-1, 0 );
   } else {
-    console.error('invalid value.');
+    console.error('invalid value:', 'decr', n1);
   }
   var vTmp = v();
 }
-var i;
-for(i=-5; i<15; i++) {
-  console.log(n(v(i).x, v(i).y) + ': ' + decr(i));
+
+var i, j;
+for(j=-0; j<15; j++) {
+  var tmp = '';
+  for(i=-0; i<15; i++) {
+    tmp += plus(i, j) + ' ';
+  }
+  console.log(tmp);
 }
