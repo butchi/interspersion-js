@@ -1,130 +1,233 @@
-// plusとsubではエラーがたくさん
-function v(n) {
-  var x=0;
-  var y=0;
-  var ret = {};
-  if(n!==~~n) {
-    console.error('invalid value:', 'v', n);
-    ret.x = NaN;
-    ret.y = NaN;
-    return ret;
-  }
-  if(n===0) {
-    ret.x = 0;
-    ret.y = Number.NEGATIVE_INFINITY;
-    ret.valueOf = function() {
-      return 0;
+// 03 文字列操作メインの計算に変更
+// 03 未完成
+"use strict";
+var INDETERMINATE = "x";
+var ZERO = "";
+//var ZERO = "0";
+
+var Interspersion = (function Interspersion() {
+  function s(n1) {
+    if(n1==="0" || n1==="") {
+      return INDETERMINATE;
     }
-    ret.toString = function() {
-      return '0';
-    };
+    if(negativeQ(n1)) {
+      return decr(minus(n1));
+    }
+    try {
+      var ret = n1.match(/^([01]*)10*$/)[1];
+    } catch(e) {
+      return NaN
+    }
     return ret;
   }
-  while((n & 1)==0) {
-    n>>=1;
-    y++;
+  /*
+   * 0の個数ではなく0の繰り返し文字列を返す
+   */
+  function e(n1) {
+    if(n1==="0" || n1==="") {
+      return INDETERMINATE;
+    }
+    if(negativeQ(n1)) {
+      return minus(n1);
+    }
+    try {
+      var ret = n1.match(/^[01]*1(0*)$/)[1];
+    } catch(e) {
+      return NaN
+    }
+    return ret;
   }
-  x = n>>1;
-  ret.x = x;
-  ret.y = y;
-  ret.valueOf = function() {
-    return ret.x+','+ret.y;
-  }
-  ret.toString = function() {
-    return '('+ret.x+','+ret.y+')';
+  return {
+    s: s,
+    e: e
   };
-  return ret;
-}
+})();
 
-function n(x, y) {
-  return (x*2+1)*Math.pow(2, y);
-}
-
-function plus(n1, n2) {
-  var traceTxt = '';
-  var v1 = v(n1);
-  var v2 = v(n2);
-  
-  if(n2===0) {
-    return n1;
+function n(s, e) {
+  if(s === INDETERMINATE && e === INDETERMINATE) {
+    return ZERO;
+  } else {
+    return s+"1"+e;
   }
-  if(n1===0) {
+}
+
+function zeroLen(e) {
+  if(e==="") {
+    return "";
+  } else {
+    return e.length.toString(2);
+  }
+}
+
+/*
+ * newして使ってください
+ */
+function V(n) {
+  this.s = Interspersion.s(n);
+  this.e = Interspersion.e(n);
+};
+
+function zeroQ(v1) {
+  return ((v1 instanceof V) && v1.s === INDETERMINATE && v1.e === INDETERMINATE);
+}
+
+function sameQ(v1, v2) {
+  return ((v1 instanceof V) && v1.s === v2.s && v1.e === v2.e)}
+
+function negativeQ(n1) {
+  return !!n1.match(/^-/);
+}
+
+function minus(n1, mode) {
+  if(typeof n1 !== "string") {
+    console.error("Please input string.");
+  }
+  if(mode === "traditional") {
+    if(n1 === ZERO) {
+      n1 = "0";
+    }
+    var ret = -parseInt(n1, 2);
+    return (ret===0)? ZERO : ret.toString(2);
+  }
+  if(n1===ZERO) {
+    return ZERO;
+  }
+  if(n1.match(/^-[01]+$/)) {
+    return n1.match(/^-([01]+)$/)[1]
+  } else if(n1.match(/^1[01]*$/)) {
+    return "-"+n1;
+  }
+}
+
+function plus(n1, n2, mode) {
+  if((typeof n1 !== "string") || (typeof n2 !== "string")) {
+    console.error("Please input string.");
+  }
+  if(mode === "traditional") {
+    if(n1 === ZERO) {
+      n1 = "0";
+    }
+    if(n2 === ZERO) {
+      n2 = "0";
+    }
+    var ret = (parseInt(n1, 2)+parseInt(n2, 2));
+    return (ret===0)? ZERO : ret.toString(2);
+  }
+  var v1 = new V(n1);
+  var v2 = new V(n2);
+  
+  if(n2===ZERO) {
+	    return n1;
+  }
+  if(n1===ZERO) {
     return n2;
   }
-
-  if(v1.y===v2.y) {
-    var vTmp = v(v1.x+v2.x+1);
-    return n(vTmp.x, incr(plus(vTmp.y, v1.y)));
-  } else if(v1.y>v2.y) {
-    return n( plus( n(v1.x, decr(plus(v1.y, -v2.y))), v2.x ), v2.y );
-  } else if(v2.y>v1.y) {
-    return n( plus( n(v2.x, decr(plus(v2.y, -v1.y))), v1.x ), v1.y );
+  
+  if(v1.e===v2.e) {
+    var vTmp = new V(incr(plus(v1.s,v2.s)));
+    return n(vTmp.s, incr(plus(vTmp.e, v1.e)));
+  } else if(v1.e.length>v2.e.length) {
+    return n( plus( n(v1.s, decr(sub(v1.e, v2.e))), v2.s ), v2.s );
+  } else if(v2.e.length>v1.e.length) {
+    return n( plus( n(v2.s, decr(sub(v2.e, v1.y))), v1.s ), v1.e );
   } else {
     console.error('invalid value:'+'plus', n1, n2);
   }
 }
 
-function sub(n1, n2) {
-  var traceTxt = '';
-  var v1 = v(n1);
-  var v2 = v(n2);
+function sub(n1, n2, mode) {
+  if((typeof n1 !== "string") || (typeof n2 !== "string")) {
+    console.error("Please input string.");
+  }
+  if(mode === "traditional") {
+    if(n1 === ZERO) {
+      n1 = "0";
+    }
+    if(n2 === ZERO) {
+      n2 = "0";
+    }
+    var ret = (parseInt(n1, 2)-parseInt(n2, 2));
+    return (ret===0)? ZERO : ret.toString(2);
+  }
+  var v1 = new V(n1);
+  var v2 = new V(n2);
   
-  if(n2===0) {
+  if(n2===ZERO) {
     return n1;
   }
-  if(n1===0) {
-    return -n2;
+  if(n1===ZERO) {
+    return minus(n2);
   }
 
-  if(v1.y===v2.y) {
-    var vTmp = v(v1.x-v2.x);
-    return n(vTmp.x, 1+(vTmp.y+ v1.y));
-  } else if(v1.y>v2.y) {
-    return n( ( n(v1.x+ -1+((v1.y- v2.y))), v2.x ), v2.y );
-  } else if(v2.y>v1.y) {
-    return n( ( n(v2.x+ -1+((v2.y- v1.y))), v1.x ), v1.y );
+  if(v1.e===v2.e) {
+    var vTmp = new V(sub(v1.s,v2.s));
+    return n(vTmp.s, incr(plus(vTmp.e,v1.e)));
+  } else if(v1.e.length>v2.length) {
+    return n( sub( n(v1.s, decr(sub(v1.e,v2.e))), v2.s ), v2.e );
+  } else if(v2.e.length>v1.e.length) {
+    return n( sub( n(v2.s, decr(sub(v2.e,v1.e))), v1.s ), v1.e );
   } else {
     console.error('invalid value:'+'sub', n1, n2);
   }
 }
 
-function incr(n1) {
-  var v1 = v(n1);
-  if(n1===0) {
-    return 1;
+function incr(n1, mode) {
+  if(typeof n1 !== "string") {
+    console.error("Please input string.");
   }
-  if(v1.y===0) {
-    var vTmp = v(v1.x+1);
-    return n(vTmp.x, vTmp.y+v1.y+1);
-  } else if(v1.y>0) {
-    return n( n(v1.x, v1.y-1), 0 );
+  if(mode === "traditional") {
+    if(n1 === ZERO) {
+      n1 = "0";
+    }
+    var ret = (parseInt(n1, 2)+1);
+    return (ret===0)? ZERO : ret.toString(2);
+  }
+  var v1 = new V(n1);
+  
+  if(n1===ZERO) {
+    return "1";
+  }
+  if(v1.e==="") {
+    var vTmp = new V(incr(v1.s));
+    return n(vTmp.s, incr(plus(zeroLen(vTmp.e), zeroLen(v1.e))));
+  } else if(v1.e.length>0) {
+    return n( n(v1.s, decr(zeroLen(v1.e))), "" );
   } else {
     console.error('invalid value:', 'incr', n1);
   }
-  var vTmp = v();
 }
 
-function decr(n1) {
-  var v1 = v(n1);
-  if(n1===0) {
-    return -1;
+function decr(n1, mode) {
+  if(typeof n1 !== "string") {
+    console.error("Please input string.");
   }
-  if(v1.y===0) {
-    var vTmp = v(v1.x);
-    return n(vTmp.x, vTmp.y+v1.y+1);
-  } else if(v1.y>0) {
-    return n( n(v1.x, v1.y-1)-1, 0 );
+  if(mode === "traditional") {
+    if(n1 === ZERO) {
+      n1 = "0";
+    }
+    var ret = (parseInt(n1, 2)-1);
+    return (ret===0)? ZERO : ret.toString(2);
+  }
+  var v1 = new V(n1);
+  if(n1===ZERO) {
+    return minus("1");
+  }
+  if(v1.e==="") {
+    return n(Interspersion.s(v1.s), incr(plus(zeroLen(Interspersion.e(v1.s)), zeroLen(v1.e))));
+  } else if(v1.e.length>0) {
+    return n( decr(n(v1.s, decr(v1.e))), "0" );
   } else {
     console.error('invalid value:', 'decr', n1);
   }
-  var vTmp = v();
 }
 
+/*
 var i, j;
-for(j=-0; j<15; j++) {
+for(j=-8; j<8; j++) {
   var tmp = '';
-  for(i=-0; i<15; i++) {
-    tmp += plus(i, j) + ' ';
+  for(i=-8; i<8; i++) {
+    tmp += sub(i.toString(2), j.toString(2), "traditional") + ' ';
   }
   console.log(tmp);
 }
+*/
