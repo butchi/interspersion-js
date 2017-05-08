@@ -1,5 +1,3 @@
-// 03 文字列操作メインの計算に変更
-// 03 未完成
 "use strict";
 var INDETERMINATE = "x";
 var ZERO = "";
@@ -15,13 +13,13 @@ var Interspersion = (function Interspersion() {
     }
     try {
       var ret = n1.match(/^([01]*)10*$/)[1];
-    } catch(e) {
+    } catch(err) {
       return NaN
     }
     return ret;
   }
   /*
-   * 0の個数ではなく0の繰り返し文字列を返す
+   * 末尾の0の個数を返す
    */
   function e(n1) {
     if(n1==="0" || n1==="") {
@@ -32,10 +30,10 @@ var Interspersion = (function Interspersion() {
     }
     try {
       var ret = n1.match(/^[01]*1(0*)$/)[1];
-    } catch(e) {
-      return NaN
+    } catch(err) {
+      return NaN;
     }
-    return ret;
+    return zeroLen(ret);
   }
   return {
     s: s,
@@ -47,7 +45,7 @@ function n(s, e) {
   if(s === INDETERMINATE && e === INDETERMINATE) {
     return ZERO;
   } else {
-    return s+"1"+e;
+    return s+"1"+zeros(e);
   }
 }
 
@@ -59,7 +57,29 @@ function zeroLen(e) {
   }
 }
 
-/*
+function toInt(n1) {
+  if(typeof n1 !== "string") {
+    console.error("Please input string.");
+  }
+  if(n1==="") {
+    return 0;
+  }
+  return parseInt(n1, 2);
+}
+
+/**
+ * n1個の0の列
+ * 小さい数のときはあらかじめ長い0の列を作っておいてsliceするといいかもしれない
+ * 参考: http://d.hatena.ne.jp/hir90/20080620/1213987444
+ */
+function zeros(n1) {
+  if(typeof n1 !== "string") {
+    console.error("Please input string");
+  }
+
+  return new Array(toInt(n1)+1).join("0");}
+
+/**
  * newして使ってください
  */
 function V(n) {
@@ -126,9 +146,9 @@ function plus(n1, n2, mode) {
   if(v1.e===v2.e) {
     var vTmp = new V(incr(plus(v1.s,v2.s)));
     return n(vTmp.s, incr(plus(vTmp.e, v1.e)));
-  } else if(v1.e.length>v2.e.length) {
+  } else if(toInt(v1.e)>toInt(v2.e)) {
     return n( plus( n(v1.s, decr(sub(v1.e, v2.e))), v2.s ), v2.s );
-  } else if(v2.e.length>v1.e.length) {
+  } else if(toInt(v2.e)>toInt(v1.e)) {
     return n( plus( n(v2.s, decr(sub(v2.e, v1.y))), v1.s ), v1.e );
   } else {
     console.error('invalid value:'+'plus', n1, n2);
@@ -171,6 +191,7 @@ function sub(n1, n2, mode) {
   }
 }
 
+// 負の数未対応
 function incr(n1, mode) {
   if(typeof n1 !== "string") {
     console.error("Please input string.");
@@ -188,10 +209,10 @@ function incr(n1, mode) {
     return "1";
   }
   if(v1.e==="") {
-    var vTmp = new V(incr(v1.s));
-    return n(vTmp.s, incr(plus(zeroLen(vTmp.e), zeroLen(v1.e))));
-  } else if(v1.e.length>0) {
-    return n( n(v1.s, decr(zeroLen(v1.e))), "" );
+    var vTmp = new V(incr(v1.s,"traditional"));
+    return n(vTmp.s, incr(plus(vTmp.e, v1.e),"traditional"));
+  } else if(toInt(v1.e)>0) {
+    return n( n(v1.s, decr(v1.e, "traditional")), "" );
   } else {
     console.error('invalid value:', 'incr', n1);
   }
@@ -213,9 +234,9 @@ function decr(n1, mode) {
     return minus("1");
   }
   if(v1.e==="") {
-    return n(Interspersion.s(v1.s), incr(plus(zeroLen(Interspersion.e(v1.s)), zeroLen(v1.e))));
-  } else if(v1.e.length>0) {
-    return n( decr(n(v1.s, decr(v1.e))), "0" );
+    return n(Interspersion.s(v1.s), incr(plus(Interspersion.e(v1.s), v1.e, "traditional"), "traditional"));
+  } else if(toInt(v1.e)>0) {
+    return n( decr(n(v1.s, decr(v1.e, "traditional")), "traditional"), "0" );
   } else {
     console.error('invalid value:', 'decr', n1);
   }
