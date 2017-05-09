@@ -2,7 +2,7 @@
   "name": "npm-starter",
   "version": "0.0.0",
   "description": "node module starter kit",
-  "main": "src/script.js",
+  "main": "src/intsprs.js",
   "engines": {
     "node": ">=6.9.1"
   },

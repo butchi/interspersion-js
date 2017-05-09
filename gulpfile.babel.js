@@ -13,7 +13,7 @@ import watch from 'gulp-watch';
 
 
 // const
-const APP = 'script';
+const APP = 'intsprs';
 const SRC = './src';
 const HTDOCS = './docs';
 const DEST = './dist';
