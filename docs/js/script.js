@@ -24,6 +24,18 @@ console.log(tmp);
 tmp = Intsprs.minus('1010');
 console.log(tmp);
 
-tmp = Intsprs.plus('11', '10');
+tmp = Intsprs.incr('111');
 console.log(tmp);
 
+tmp = Intsprs.decr('100');
+console.log(tmp);
+
+for (let i = 0; i <= 10; i++) {
+  tmp = Intsprs.incr(i.toString(2));
+  console.log(`${i.toString(2)} + 1:`, tmp);
+}
+
+for (let i = 10; i > 0; i--) {
+  tmp = Intsprs.decr(i.toString(2));
+  console.log(`${i.toString(2)} - 1:`, tmp);
+}

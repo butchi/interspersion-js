@@ -25,6 +25,7 @@ gulp.task('browserify', () => {
     .bundle()
     .pipe(source(`${APP}.js`))
     .pipe(gulp.dest(`${DEST}`))
+    .pipe(gulp.dest(`${HTDOCS}/js/lib`))
   ;
 });
 

@@ -4,6 +4,9 @@ const ZERO = "";
 
 const Interspersion = (function Interspersion() {
   function s(n1) {
+    const decr = Intsprs.decr;
+    const minus = Intsprs.minus;
+
     if(n1 === "0" || n1 === "") {
       return INDETERMINATE;
     }
@@ -21,6 +24,8 @@ const Interspersion = (function Interspersion() {
    * 末尾の0の個数を返す
    */
   function e(n1) {
+    const minus = Intsprs.minus;
+
     if(n1=== "0" || n1 === "") {
       return INDETERMINATE;
     }
@@ -148,59 +153,67 @@ function negativeQ(n1) {
       var v1 = new V(n1);
       var v2 = new V(n2);
       
-      if(n2 === ZERO) {
+      if(n2 === '0' || n2 === '') {
         return n1;
       }
-      if(n1 === ZERO) {
+      if(n1 === '0' || n1 === '') {
         return n2;
       }
-      
+
       if(v1.e === v2.e) {
-        var vTmp = new V(incr(plus(v1.s, v2.s)));
+        let vTmp = new V(incr(plus(v1.s, v2.s)));
         return n(vTmp.s, incr(plus(vTmp.e, v1.e)));
       } else if(toInt(v1.e) > toInt(v2.e)) {
-        return n( plus( n(v1.s, decr(sub(v1.e, v2.e))), v2.s ), v2.s );
-      } else if(toInt(v2.e)>toInt(v1.e)) {
-        return n( plus( n(v2.s, decr(sub(v2.e, v1.y))), v1.s ), v1.e );
+        return n( plus( n(v1.s, decr(sub(v1.e, v2.e, 'traditional'))), v2.s ), v2.e );
+      } else if(toInt(v2.e) > toInt(v1.e)) {
+        return n( plus( n(v2.s, decr(sub(v2.e, v1.e, 'traditional'))), v1.s ), v1.e );
       } else {
         console.error('invalid value:'+'plus', n1, n2);
       }
     },
 
     sub: (n1, n2, mode) => {
+      const n = Intsprs.n;
       const plus = Intsprs.plus;
+      const sub = Intsprs.sub;
       const minus = Intsprs.minus;
+      const incr = Intsprs.incr;
+      const decr = Intsprs.decr;
 
       if((typeof n1 !== "string") || (typeof n2 !== "string")) {
         console.error("Please input string.");
       }
       if(mode === "traditional") {
-        if(n1 === ZERO) {
+        if(n1 === '' || n1 === '0') {
           n1 = "0";
         }
-        if(n2 === ZERO) {
+        if(n2 === '' || n1 === '0') {
           n2 = "0";
         }
         var ret = (parseInt(n1, 2) - parseInt(n2, 2));
-        return (ret===0) ? ZERO : ret.toString(2);
+        return (ret === 0) ? ZERO : ret.toString(2);
       }
       var v1 = new V(n1);
       var v2 = new V(n2);
+
+      if(n1 === n2) {
+        return ZERO;
+      }
       
-      if(n2 === ZERO) {
+      if(n2 === '' || n2 === '0') {
         return n1;
       }
-      if(n1 === ZERO) {
+      if(n1 === '' || n1 === '0') {
         return minus(n2);
       }
 
       if(v1.e === v2.e) {
-        var vTmp = new V(sub(v1.s,v2.s));
-        return n(vTmp.s, incr(plus(vTmp.e,v1.e)));
-      } else if(v1.e.length > v2.length) {
-        return n( sub( n(v1.s, decr(sub(v1.e,v2.e))), v2.s ), v2.e );
-      } else if(v2.e.length > v1.e.length) {
-        return n( sub( n(v2.s, decr(sub(v2.e,v1.e))), v1.s ), v1.e );
+        var vTmp = new V(sub(v1.s, v2.s, 'traditional'));
+        return n(vTmp.s, incr(plus(vTmp.e, v1.e)));
+      } else if(toInt(v1.e) > toInt(v2.e)) {
+        return n( sub( n(v1.s, decr(sub(v1.e, v2.e, 'traditional'))), v2.s, 'traditional' ), v2.e );
+      } else if(toInt(v2.e) > toInt(v1.e)) {
+        return minus( n( sub( n(v2.s, decr(sub(v2.e, v1.e, 'traditional'))), v1.s, 'traditional' ), v1.e ) );
       } else {
         console.error('invalid value:'+'sub', n1, n2);
       }
@@ -210,6 +223,8 @@ function negativeQ(n1) {
     incr: (n1, mode) => {
       const n = Intsprs.n;
       const minus = Intsprs.minus;
+      const plus = Intsprs.plus;
+      const incr = Intsprs.incr;
       const decr = Intsprs.decr;
 
       if(typeof n1 !== "string") {
@@ -223,22 +238,28 @@ function negativeQ(n1) {
         return (ret === 0) ? ZERO : ret.toString(2);
       }
       var v1 = new V(n1);
-      
-      if(n1 === ZERO) {
+
+      if(n1 === ZERO || n1 === '0') {
         return "1";
       }
 
       if(v1.e === "") {
-        var vTmp = new V(incr(v1.s,"traditional"));
-        return n(vTmp.s, incr(plus(vTmp.e, v1.e),"traditional"));
+        var vTmp = new V(incr(v1.s));
+        return n(vTmp.s, incr(plus(vTmp.e, v1.e)));
       } else if(toInt(v1.e)>0) {
-        return n( n(v1.s, decr(v1.e, "traditional")), "" );
+        return n( n(v1.s, decr(v1.e)), "" );
       } else {
         console.error('invalid value:', 'incr', n1);
       }
     },
 
     decr: (n1, mode) => {
+      const n = Intsprs.n;
+      const plus = Intsprs.plus;
+      const minus = Intsprs.minus;
+      const incr = Intsprs.incr;
+      const decr = Intsprs.decr;
+
       if(typeof n1 !== "string") {
         console.error("Please input string.");
       }
@@ -247,21 +268,24 @@ function negativeQ(n1) {
           n1 = "0";
         }
         var ret = (parseInt(n1, 2) - 1);
-        return (ret===0)? ZERO : ret.toString(2);
+        return (ret === 0)? ZERO : ret.toString(2);
       }
       var v1 = new V(n1);
-      if(n1===ZERO) {
+      if(n1 === ZERO) {
         return minus("1");
       }
-      if(v1.e==="") {
+      if(v1.e === "") {
+        if(v1.s === "") {
+          return ZERO;
+        }
         return n(Interspersion.s(v1.s), incr(plus(Interspersion.e(v1.s), v1.e, "traditional"), "traditional"));
       } else if(toInt(v1.e) > 0) {
-        return n( decr(n(v1.s, decr(v1.e, "traditional")), "traditional"), "0" );
+        return n( decr(n(v1.s, decr(v1.e))), "0" );
       } else {
         console.error('invalid value:', 'decr', n1);
       }
     },
-  }
+  };
 
   /*
   var i, j;
