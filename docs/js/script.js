@@ -67,3 +67,28 @@ for (let n1 = 0; n1 <= 10; n1++) {
   }
   console.log(tmp);
 }
+
+function pow(n1, n2) {
+  let ret = n1;
+
+  if(typeof n1 === 'string') {
+    n1 = n1.toString(2) || '';
+  }
+
+  if(n2 === 0) {
+    return 1;
+  }
+
+  if(n2 === 1) {
+    return n1;
+  }
+
+  for (i = 0; i < n2 - 1; i++) {
+    ret = Intsprs.mult(ret, n1);
+  }
+
+  return ret;
+}
+
+tmp = pow(10, 200);
+console.log(toInt(tmp));
