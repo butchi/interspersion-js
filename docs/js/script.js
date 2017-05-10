@@ -2,6 +2,7 @@ let tmp;
 let tmp1;
 let tmp2;
 
+
 for (let i = 0; i <= 10; i++) {
   tmp = new V(i.toString(2));
   console.log('V:', tmp);
@@ -38,6 +39,11 @@ for (let i = 0; i <= 10; i++) {
 for (let i = 10; i > 0; i--) {
   tmp = Intsprs.decr(i.toString(2));
   console.log(`${i.toString(2)} - 1:`, tmp);
+}
+
+for (let i = 0; i < 10; i++) {
+  tmp = Intsprs.double(i.toString(2));
+  console.log(`${i.toString(2)} * 2:`, tmp);
 }
 
 for (let n1 = 0; n1 <= 10; n1++) {
