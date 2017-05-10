@@ -13,6 +13,10 @@ var Interspersion = function Interspersion() {
     var decr = Intsprs.decr;
     var minus = Intsprs.minus;
 
+    if (typeof n1 === 'number') {
+      n1 = n1.toString(2) || ZERO;
+    }
+
     if (n1 === '0' || n1 === '') {
       return INDETERMINATE;
     }
@@ -32,6 +36,10 @@ var Interspersion = function Interspersion() {
    */
   function e(n1) {
     var minus = Intsprs.minus;
+
+    if (typeof n1 === 'number') {
+      n1 = n1.toString(2) || ZERO;
+    }
 
     if (n1 === '0' || n1 === '') {
       return INDETERMINATE;
@@ -70,17 +78,7 @@ function zeros(n1) {
     console.error('Please input string');
   }
 
-  return new Array(toInt(n1) + 1).join('0');
-}
-
-function toInt(n1) {
-  if (typeof n1 !== 'string') {
-    console.error("Please input string.");
-  }
-  if (n1 === '') {
-    return 0;
-  }
-  return parseInt(n1, 2);
+  return new Array(Intsprs.toInt(n1) + 1).join('0');
 }
 
 function negativeQ(n1) {
@@ -106,6 +104,16 @@ function negativeQ(n1) {
       }
     },
 
+    toInt: function toInt(n1) {
+      if (typeof n1 !== 'string') {
+        console.error("Please input string.");
+      }
+      if (n1 === '') {
+        return 0;
+      }
+      return parseInt(n1, 2);
+    },
+
     zeroQ: function zeroQ(v1) {
       return v1 instanceof V && v1.s === INDETERMINATE && v1.e === INDETERMINATE;
     },
@@ -115,6 +123,10 @@ function negativeQ(n1) {
     },
 
     minus: function minus(n1, mode) {
+      if (typeof n1 === 'number') {
+        n1 = n1.toString(2) || ZERO;
+      }
+
       if (typeof n1 !== 'string') {
         console.error('Please input string.');
       }
@@ -137,10 +149,18 @@ function negativeQ(n1) {
 
     plus: function plus(n1, n2, mode) {
       var n = Intsprs.n;
+      var toInt = Intsprs.toInt;
       var incr = Intsprs.incr;
       var decr = Intsprs.decr;
       var plus = Intsprs.plus;
       var sub = Intsprs.sub;
+
+      if (typeof n1 === 'number') {
+        n1 = n1.toString(2) || ZERO;
+      }
+      if (typeof n2 === 'number') {
+        n2 = n2.toString(2) || ZERO;
+      }
 
       if (typeof n1 !== 'string' || typeof n2 !== 'string') {
         console.error("Please input string.");
@@ -186,11 +206,19 @@ function negativeQ(n1) {
 
     sub: function sub(n1, n2, mode) {
       var n = Intsprs.n;
+      var toInt = Intsprs.toInt;
       var plus = Intsprs.plus;
       var sub = Intsprs.sub;
       var minus = Intsprs.minus;
       var incr = Intsprs.incr;
       var decr = Intsprs.decr;
+
+      if (typeof n1 === 'number') {
+        n1 = n1.toString(2) || ZERO;
+      }
+      if (typeof n2 === 'number') {
+        n2 = n2.toString(2) || ZERO;
+      }
 
       if (typeof n1 !== "string" || typeof n2 !== "string") {
         console.error("Please input string.");
@@ -228,10 +256,15 @@ function negativeQ(n1) {
     // 負の数未対応
     incr: function incr(n1, mode) {
       var n = Intsprs.n;
+      var toInt = Intsprs.toInt;
       var minus = Intsprs.minus;
       var plus = Intsprs.plus;
       var incr = Intsprs.incr;
       var decr = Intsprs.decr;
+
+      if (typeof n1 === 'number') {
+        n1 = n1.toString(2) || ZERO;
+      }
 
       if (typeof n1 !== 'string') {
         console.error('Please input string.');
@@ -261,10 +294,15 @@ function negativeQ(n1) {
 
     decr: function decr(n1, mode) {
       var n = Intsprs.n;
+      var toInt = Intsprs.toInt;
       var plus = Intsprs.plus;
       var minus = Intsprs.minus;
       var incr = Intsprs.incr;
       var decr = Intsprs.decr;
+
+      if (typeof n1 === 'number') {
+        n1 = n1.toString(2) || ZERO;
+      }
 
       if (typeof n1 !== 'string') {
         console.error('Please input string.');
@@ -303,6 +341,10 @@ function negativeQ(n1) {
       var plus = Intsprs.plus;
       var mult = Intsprs.mult;
 
+      if (typeof n1 === 'number') {
+        n1 = n1.toString(2) || ZERO;
+      }
+
       if (typeof n1 !== 'string') {
         console.error('Please input string.');
       }
@@ -326,6 +368,13 @@ function negativeQ(n1) {
       var plus = Intsprs.plus;
       var mult = Intsprs.mult;
       var double = Intsprs.double;
+
+      if (typeof n1 === 'number') {
+        n1 = n1.toString(2) || ZERO;
+      }
+      if (typeof n2 === 'number') {
+        n2 = n2.toString(2) || ZERO;
+      }
 
       if (typeof n1 !== 'string' || typeof n2 !== 'string') {
         console.error('Please input string.');
