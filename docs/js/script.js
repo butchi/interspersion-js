@@ -69,21 +69,17 @@ for (let n1 = 0; n1 <= 10; n1++) {
 }
 
 function pow(n1, n2) {
-  let ret = n1;
-
-  if(typeof n1 === 'string') {
+  if(typeof n1 === 'number') {
     n1 = n1.toString(2) || '';
   }
 
   if(n2 === 0) {
-    return 1;
+    return '1';
   }
 
-  if(n2 === 1) {
-    return n1;
-  }
+  let ret = n1;
 
-  for (i = 0; i < n2 - 1; i++) {
+  for (let i = 0; i < n2 - 1; i++) {
     ret = Intsprs.mult(ret, n1);
   }
 
