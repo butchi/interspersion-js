@@ -288,6 +288,42 @@ function negativeQ(n1) {
       } else {
         console.error('invalid value:', 'decr', n1);
       }
+    },
+
+    mult: function mult(n1, n2, mode) {
+      var n = Intsprs.n;
+      var plus = Intsprs.plus;
+      var mult = Intsprs.mult;
+
+      if (typeof n1 !== "string" || typeof n2 !== "string") {
+        console.error("Please input string.");
+      }
+      if (mode === "traditional") {
+        if (n1 === '0' || n1 === '' || n2 === '0' || n2 === '') {
+          return ZERO;
+        }
+        var ret = parseInt(n1, 2) * parseInt(n2, 2);
+        return ret === 0 ? ZERO : ret.toString(2);
+      }
+      var v1 = new V(n1);
+      var v2 = new V(n2);
+
+      if (n1 === '0' || n1 === '' || n2 === '0' || n2 === '') {
+        return ZERO;
+      }
+
+      if (n2 === '1' || n2 === '') {
+        return n1;
+      }
+      if (n1 === '1' || n1 === '') {
+        return n2;
+      }
+
+      var s3 = plus(mult('10', mult(v1.s, v2.s)), plus(v1.s, v2.s));
+      var e3 = plus(v1.e, v2.e);
+      var n3 = n(s3, e3);
+
+      return n3;
     }
   };
 

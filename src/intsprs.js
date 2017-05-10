@@ -285,6 +285,42 @@ function negativeQ(n1) {
         console.error('invalid value:', 'decr', n1);
       }
     },
+
+    mult: (n1, n2, mode) => {
+      const n = Intsprs.n;
+      const plus = Intsprs.plus;
+      const mult = Intsprs.mult;
+
+      if((typeof n1 !== "string") || (typeof n2 !== "string")) {
+        console.error("Please input string.");
+      }
+      if(mode === "traditional") {
+        if(n1 === '0' || n1 === '' || n2 === '0' || n2 === '') {
+          return ZERO;
+        }
+        let ret = (parseInt(n1, 2) * parseInt(n2, 2));
+        return (ret === 0)? ZERO : ret.toString(2);
+      }
+      const v1 = new V(n1);
+      const v2 = new V(n2);
+
+      if(n1 === '0' || n1 === '' || n2 === '0' || n2 === '') {
+        return ZERO;
+      }
+
+      if(n2 === '1' || n2 === '') {
+        return n1;
+      }
+      if(n1 === '1' || n1 === '') {
+        return n2;
+      }
+
+      let s3 = plus(mult('10', mult(v1.s, v2.s)), plus(v1.s, v2.s));
+      let e3 = plus(v1.e, v2.e);
+      let n3 = n(s3, e3);
+
+      return n3;
+    },
   };
 
   /*
