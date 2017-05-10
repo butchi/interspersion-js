@@ -390,10 +390,10 @@ function negativeQ(n1) {
         return ZERO;
       }
 
-      if (n2 === '1' || n2 === '') {
+      if (n1 === '1') {
         return n1;
       }
-      if (n1 === '1' || n1 === '') {
+      if (n2 === '1') {
         return n2;
       }
 
