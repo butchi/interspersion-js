@@ -43,6 +43,16 @@ for (let i = 10; i > 0; i--) {
 for (let n1 = 0; n1 <= 10; n1++) {
   tmp = '';
   for (let n2 = 0; n2 <= 10; n2++) {
+    tmp1 = Intsprs.plus(n1.toString(2), n2.toString(2));
+    tmp2 = ('  ' + (parseInt(tmp1, 2) || 0)).slice(-3);
+    tmp += `${tmp2 } `;
+  }
+  console.log(tmp);
+}
+
+for (let n1 = 0; n1 <= 10; n1++) {
+  tmp = '';
+  for (let n2 = 0; n2 <= 10; n2++) {
     tmp1 = Intsprs.mult(n1.toString(2), n2.toString(2));
     tmp2 = ('  ' + (parseInt(tmp1, 2) || 0)).slice(-3);
     tmp += `${tmp2 } `;
